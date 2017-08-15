@@ -16,7 +16,7 @@ profiles.clj dependencies
 profiles.clj injections
 ```clojure
 :injections [(use 'syringe.dose)
-(use 'syringe.midje)]
+             (use 'syringe.midje)]
 ```
 
 ## License
