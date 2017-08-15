@@ -8,12 +8,16 @@ Clojure code suitable for dev profile injection
 
 ####
 profiles.clj dependencies
-```[waffletower/syringe "0.1.0"]```
+```clojure
+[waffletower/syringe "0.1.0"]
+```
 
 ####
 profiles.clj injections
-```(use 'syringe.dose)
-(use 'syringe.midje)```
+```clojure
+(use 'syringe.dose)
+(use 'syringe.midje)
+```
 
 ## License
 
