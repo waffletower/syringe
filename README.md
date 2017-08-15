@@ -9,14 +9,14 @@ Clojure code suitable for dev profile injection
 ####
 profiles.clj dependencies
 ```clojure
-[waffletower/syringe "0.1.0"]
+:dependencies [[waffletower/syringe "0.1.0"]]
 ```
 
 ####
 profiles.clj injections
 ```clojure
-(use 'syringe.dose)
-(use 'syringe.midje)
+:injections [(use 'syringe.dose)
+(use 'syringe.midje)]
 ```
 
 ## License
