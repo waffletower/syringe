@@ -11,7 +11,7 @@
 ;; namespace utilities
 (defmacro publics
   "inspect public symbols of namespace"
-  ([] `(publics *ns*))
+  ([] `(publics ~*ns*))
   ([n] `(->> '~n
              stringify
              symbol
@@ -21,7 +21,7 @@
 
 (defmacro refers
   "inspect referenced symbols of namespace"
-  ([] `(refers *ns*))
+  ([] `(refers ~*ns*))
   ([n] `(->> '~n
              stringify
              symbol
