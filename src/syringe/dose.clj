@@ -16,8 +16,7 @@
              stringify
              symbol
              ns-publics
-             keys
-             pprint)))
+             keys)))
 
 (defmacro refers
   "inspect referenced symbols of namespace"
@@ -26,8 +25,7 @@
              stringify
              symbol
              ns-refers
-             keys
-             pprint)))
+             keys)))
 
 (defn resolve-fqns [s] (->> (resolve s) meta :ns))
 
