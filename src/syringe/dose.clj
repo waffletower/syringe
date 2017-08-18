@@ -37,6 +37,14 @@
   sq - sequence of strings or string coercible objects"
   [re sq]
   (filter (fn [x] (re-find (coerce-pattern re) (str x))) sq))
+
+(defmacro ns-find
+  "perform a regex search of public symbols in a namespace
+  re - regex pattern (or string which will be coerced to a pattern)
+  n - namespace symbol (either quoted or unquoted via stringify)"
+  ([re] `(ns-find ~re 'clojure.core))
+  ([re n] `(seq-matches ~re (publics ~n))))
+
 (defn resolve-fqns [s] (->> (resolve s) meta :ns))
 
 (defmacro fqns
