@@ -27,6 +27,9 @@
              ns-refers
              keys)))
 
+(defmulti coerce-pattern class)
+(defmethod coerce-pattern java.util.regex.Pattern [x] x)
+(defmethod coerce-pattern java.lang.String [x] (re-pattern x))
 (defn resolve-fqns [s] (->> (resolve s) meta :ns))
 
 (defmacro fqns
