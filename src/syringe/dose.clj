@@ -30,6 +30,13 @@
 (defmulti coerce-pattern class)
 (defmethod coerce-pattern java.util.regex.Pattern [x] x)
 (defmethod coerce-pattern java.lang.String [x] (re-pattern x))
+
+(defn seq-matches
+  "filter a sequence by coercing items to a string and applying re-find with a supplied regex
+  re - regex pattern (or string which will be coerced to a pattern)
+  sq - sequence of strings or string coercible objects"
+  [re sq]
+  (filter (fn [x] (re-find (coerce-pattern re) (str x))) sq))
 (defn resolve-fqns [s] (->> (resolve s) meta :ns))
 
 (defmacro fqns
