@@ -1,5 +1,6 @@
 (ns syringe.dose
-  (:require [clojure.pprint :refer [pprint]]))
+  (:require [clojure.pprint :refer [pprint]]
+            [puget.printer :as puget]))
 
 (defn stringify [x]
   (let [s  (cond (string? x) x
@@ -62,3 +63,6 @@
 ;; golf conbini
 (defn p [& args]
   (apply pprint args))
+
+(defn cp [& args]
+  (apply puget/cprint args))
