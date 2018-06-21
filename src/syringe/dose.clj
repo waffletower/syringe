@@ -2,6 +2,12 @@
   (:require [clojure.pprint :refer [pprint]]
             [puget.printer :as puget]))
 
+(defn- handle-aliases [sym]
+  (let [aliases (ns-aliases *ns*)]
+    (if-let [namespace (get aliases sym)]
+      (ns-name namespace)
+      sym)))
+
 (defn stringify [x]
   (let [s  (cond (string? x) x
                  (symbol? x) (str x)
@@ -16,6 +22,7 @@
   ([n] `(->> '~n
              stringify
              symbol
+             handle-aliases
              ns-publics
              keys)))
 
@@ -25,6 +32,7 @@
   ([n] `(->> '~n
              stringify
              symbol
+             handle-aliases
              ns-refers
              keys)))
 
