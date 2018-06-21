@@ -2,7 +2,8 @@
   (:require [clojure.pprint :refer [pprint]]
             [puget.printer :as puget]))
 
-(defn- handle-aliases [sym]
+;; don't privatize functions invoked by macros
+(defn handle-aliases [sym]
   (let [aliases (ns-aliases *ns*)]
     (if-let [namespace (get aliases sym)]
       (ns-name namespace)
