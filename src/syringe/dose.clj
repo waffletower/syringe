@@ -10,11 +10,19 @@
       sym)))
 
 (defn stringify [x]
-  (let [s  (cond (string? x) x
-                 (symbol? x) (str x)
-                 (and (list? x) (= (first x) 'quote)) (str (second x))
-                 :else (str x))]
+  (let [s (cond (string? x) x
+                (symbol? x) (str x)
+                (and (list? x) (= (first x) 'quote)) (str (second x))
+                :else (str x))]
     s))
+
+(defn patternize [x]
+  (let [p (cond (string? x) (re-pattern x)
+                (symbol? x) (re-pattern (name x))
+                (coll? x) (re-pattern (-> x second name))
+                (re-pattern? x) x
+                :else (re-pattern (str x)))]
+    p))
 
 ;; namespace utilities
 (defmacro publics
@@ -37,16 +45,16 @@
              ns-refers
              keys)))
 
-(defmulti coerce-pattern class)
-(defmethod coerce-pattern java.util.regex.Pattern [x] x)
-(defmethod coerce-pattern java.lang.String [x] (re-pattern x))
+(defn re-pattern? [x]
+  (instance? java.util.regex.Pattern x))
 
-(defn seq-matches
+(defmacro seq-matches
   "filter a sequence by coercing items to a string and applying re-find with a supplied regex
   re - regex pattern (or string which will be coerced to a pattern)
   sq - sequence of strings or string coercible objects"
-  [re sq]
-  (filter (fn [x] (re-find (coerce-pattern re) (str x))) sq))
+ [re sq]
+  (let [p# (patternize re)]
+    `(filter (fn [x#] (re-find ~p# (str x#))) ~sq)))
 
 (defmacro ns-find
   "perform a regex search of public symbols in a namespace
