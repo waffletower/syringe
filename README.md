@@ -9,7 +9,7 @@ Clojure code suitable for dev profile injection
 ####
 profiles.clj dependencies
 ```clojure
-:dependencies [[waffletower/syringe "0.1.0"]]
+:dependencies [[waffletower/syringe "0.3.0"]]
 ```
 
 ####
