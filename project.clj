@@ -1,4 +1,4 @@
-(defproject waffletower/syringe "0.2.1"
+(defproject waffletower/syringe "0.3.0"
   :description "Clojure code suitable for dev profile injection"
   :url "https://github.com/waffletower/syringe"
   :license {:name "Eclipse Public License"
