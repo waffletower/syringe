@@ -9,6 +9,9 @@
       (ns-name namespace)
       sym)))
 
+(defn re-pattern? [x]
+  (instance? java.util.regex.Pattern x))
+
 (defn stringify [x]
   (let [s (cond (string? x) x
                 (symbol? x) (str x)
@@ -44,9 +47,6 @@
              handle-aliases
              ns-refers
              keys)))
-
-(defn re-pattern? [x]
-  (instance? java.util.regex.Pattern x))
 
 (defmacro seq-matches
   "filter a sequence by coercing items to a string and applying re-find with a supplied regex
