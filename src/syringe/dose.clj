@@ -19,6 +19,11 @@
                 :else (str x))]
     s))
 
+(defn coerce-symbol [x]
+  (-> x
+      stringify
+      symbol))
+
 (defn patternize [x]
   (let [p (cond (string? x) (re-pattern x)
                 (symbol? x) (re-pattern (name x))
@@ -68,7 +73,7 @@
 (defmacro fqns
   "poll fully qualified namespace of symbol 's'"
   ([] `(resolve-fqns *ns*))
-  ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
+  ([symbol-or-string] `(resolve-fqns (coerce-symbol '~symbol-or-string))))
 
 (defn get-classpath []
   (sort (map (memfn getPath)
@@ -76,6 +81,13 @@
 
 (defn list-all-ns []
   (pprint (map ns-name (all-ns))))
+
+(defn unmap
+  "perform `ns-unmap` for a given symbol, `sym` on multiple namespaces."
+  [sym & namespaces]
+  (let [s (coerce-symbol sym)]
+     (doseq [n namespaces]
+       (ns-unmap n s))))
 
 ;; golf conbini
 (defn p [& args]
