@@ -1,5 +1,6 @@
 (ns syringe.dose
   (:require [clojure.pprint :refer [pprint]]
+            [clojure.repl :refer [demunge]]
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
@@ -75,7 +76,26 @@
              (seq (.getURLs (java.lang.ClassLoader/getSystemClassLoader))))))
 
 (defn list-all-ns []
-  (pprint (map ns-name (all-ns))))
+  (map ns-name (all-ns)))
+
+(defn parent-symbol
+  "somewhat hacky method to get namespaced symbol for a function.
+  can find the parent of closures returned by functions"
+  [f]
+  (when (fn? f)
+    (let [[a b]
+          (->> f
+               str
+               demunge
+               (re-find #"^(.+)/(.+)/.*$")
+               rest)]
+      (symbol a b))))
+
+(defn parent-source [f]
+  (eval (list 'source (parent-symbol f))))
+
+(defn parent-var [f]
+  (eval (list 'var (parent-symbol f))))
 
 ;; golf conbini
 (defn p [& args]
