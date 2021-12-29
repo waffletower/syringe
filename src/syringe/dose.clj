@@ -38,6 +38,16 @@
              ns-publics
              keys)))
 
+(defmacro interns
+  "inspect public symbols of namespace"
+  ([] `(publics ~*ns*))
+  ([n] `(->> '~n
+             stringify
+             symbol
+             handle-aliases
+             ns-interns
+             keys)))
+
 (defmacro refers
   "inspect referenced symbols of namespace"
   ([] `(refers ~*ns*))
