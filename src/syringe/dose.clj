@@ -36,7 +36,8 @@
              symbol
              handle-aliases
              ns-publics
-             keys)))
+             keys
+             sort)))
 
 (defmacro interns
   "inspect public symbols of namespace"
@@ -46,7 +47,8 @@
              symbol
              handle-aliases
              ns-interns
-             keys)))
+             keys
+             sort)))
 
 (defmacro refers
   "inspect referenced symbols of namespace"
@@ -56,7 +58,8 @@
              symbol
              handle-aliases
              ns-refers
-             keys)))
+             keys
+             sort)))
 
 (defmacro seq-matches
   "filter a sequence by coercing items to a string and applying re-find with a supplied regex
