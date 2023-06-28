@@ -36,7 +36,8 @@
              symbol
              handle-aliases
              ns-publics
-             keys)))
+             keys
+             sort)))
 
 (defmacro interns
   "inspect public symbols of namespace"
@@ -46,7 +47,8 @@
              symbol
              handle-aliases
              ns-interns
-             keys)))
+             keys
+             sort)))
 
 (defmacro refers
   "inspect referenced symbols of namespace"
@@ -56,7 +58,8 @@
              symbol
              handle-aliases
              ns-refers
-             keys)))
+             keys
+             sort)))
 
 (defmacro seq-matches
   "filter a sequence by coercing items to a string and applying re-find with a supplied regex
@@ -79,10 +82,6 @@
   "poll fully qualified namespace of symbol 's'"
   ([] `(resolve-fqns *ns*))
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
-
-(defn get-classpath []
-  (sort (map (memfn getPath)
-             (seq (.getURLs (java.lang.ClassLoader/getSystemClassLoader))))))
 
 (defn list-all-ns []
   (pprint (map ns-name (all-ns))))
