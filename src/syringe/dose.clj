@@ -83,10 +83,6 @@
   ([] `(resolve-fqns *ns*))
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
 
-(defn get-classpath []
-  (sort (map (memfn getPath)
-             (seq (.getURLs (java.lang.ClassLoader/getSystemClassLoader))))))
-
 (defn list-all-ns []
   (pprint (map ns-name (all-ns))))
 
