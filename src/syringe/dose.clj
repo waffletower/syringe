@@ -1,6 +1,8 @@
 (ns syringe.dose
-  (:require [clojure.pprint :as pprint]
+  (:require [clojure.pprint :refer [pprint]]
             [clojure.reflect :as reflect]
+            [clojure.java.classpath :as cp]
+            [clojure.tools.namespace.find :as find]
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
@@ -88,9 +90,6 @@
   ([] `(resolve-fqns *ns*))
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
 
-(defn list-all-ns []
-  (pprint/pprint (map ns-name (all-ns))))
-
 (defn ponder
   "Show public methods of `x` without packaging"
   [x]
@@ -100,18 +99,37 @@
        (sort-by :name)
        vec))
 
+(defn list-ns
+  "outputs sorted collection of namespace symbols via `clojure.java.classpath/classpath` and
+  `clojure.tools.namespace.find/find-namespaces`."
+  []
+  (->> (cp/classpath)
+       find/find-namespaces
+       sort))
+
+(defmacro filter-ns
+  "outputs sorted collection of namespace symbols via `clojure.java.classpath/classpath` and
+  `clojure.tools.namespace.find/find-namespaces`.
+  Allows regex symbol filtering via optional `re` argument (regex, string, or even symbols)."
+  ([] `(list-ns))
+  ([re]
+   (let [p# (when re (patternize re))]
+     `(let [ss# (list-ns)]
+        (if ~p#
+          (filter (fn [x#] (re-find ~p# (str x#))) ss#)
+          ss#)))))
 
 ;; golf conbini
 (defn p [& args]
-  (apply pprint/pprint args))
+  (apply pprint args))
 
 (defn cp [& args]
   (apply puget/cprint args))
 
 (defn wp [x]
   (binding [pprint/*print-right-margin* 100]
-    (pprint/pprint x)))
+    (pprint x)))
 
 (defn wwp [x]
   (binding [pprint/*print-right-margin* 200]
-    (pprint/pprint x)))
+    (pprint x)))
