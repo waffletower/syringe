@@ -4,6 +4,7 @@
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
+;; prefer meadows to razor-wire and chain-link fencing
 (defn handle-aliases [sym]
   (let [aliases (ns-aliases *ns*)]
     (if-let [namespace (get aliases sym)]
@@ -30,7 +31,8 @@
 
 ;; namespace utilities
 (defmacro publics
-  "inspect public symbols of namespace"
+  "inspect public symbols of namespace.
+  `n` namespace -- can be an namespace symbol alias."
   ([] `(publics ~*ns*))
   ([n] `(->> '~n
              stringify
@@ -41,7 +43,8 @@
              sort)))
 
 (defmacro interns
-  "inspect public symbols of namespace"
+  "inspect public symbols of namespace.
+  `n` namespace -- can be an namespace symbol alias."
   ([] `(publics ~*ns*))
   ([n] `(->> '~n
              stringify
@@ -52,7 +55,8 @@
              sort)))
 
 (defmacro refers
-  "inspect referenced symbols of namespace"
+  "inspect referenced symbols of namespace.
+  `n` namespace -- can be an namespace symbol alias."
   ([] `(refers ~*ns*))
   ([n] `(->> '~n
              stringify
@@ -64,7 +68,7 @@
 
 (defmacro seq-matches
   "filter a sequence by coercing items to a string and applying re-find with a supplied regex
-  re - regex pattern (or string which will be coerced to a pattern)
+  re - regex pattern (symbols or strings will be coerced to a pattern)
   sq - sequence of strings or string coercible objects"
  [re sq]
   (let [p# (patternize re)]
@@ -72,7 +76,7 @@
 
 (defmacro ns-find
   "perform a regex search of public symbols in a namespace
-  re - regex pattern (or string which will be coerced to a pattern)
+  re - regex pattern (symbols or strings will be coerced to a pattern)
   n - namespace symbol (either quoted or unquoted via stringify)"
   ([re] `(ns-find ~re 'clojure.core))
   ([re n] `(seq-matches ~re (publics ~n))))
