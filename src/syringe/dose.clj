@@ -1,5 +1,7 @@
 (ns syringe.dose
   (:require [clojure.pprint :refer [pprint]]
+            [clojure.java.classpath :as cp]
+            [clojure.tools.namespace.find :as find]
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
@@ -87,6 +89,25 @@
   ([] `(resolve-fqns *ns*))
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
 
+(defn list-ns
+  "outputs sorted collection of namespace symbols via `clojure.java.classpath/classpath` and
+  `clojure.tools.namespace.find/find-namespaces`."
+  []
+  (->> (cp/classpath)
+       find/find-namespaces
+       sort))
+
+(defmacro filter-ns
+  "outputs sorted collection of namespace symbols via `clojure.java.classpath/classpath` and
+  `clojure.tools.namespace.find/find-namespaces`.
+  Allows regex symbol filtering via optional `re` argument (regex, string, or even symbols)."
+  ([] `(list-ns))
+  ([re]
+   (let [p# (when re (patternize re))]
+     `(let [ss# (list-ns)]
+        (if ~p#
+          (filter (fn [x#] (re-find ~p# (str x#))) ss#)
+          ss#)))))
 
 ;; golf conbini
 (defn p [& args]
