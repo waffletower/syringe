@@ -87,8 +87,6 @@
   ([] `(resolve-fqns *ns*))
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
 
-(defn list-all-ns []
-  (pprint (map ns-name (all-ns))))
 
 ;; golf conbini
 (defn p [& args]
