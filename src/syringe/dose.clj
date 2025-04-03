@@ -1,5 +1,5 @@
 (ns syringe.dose
-  (:require [clojure.pprint :refer [pprint]]
+  (:require [clojure.pprint :as pprint]
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
@@ -84,11 +84,19 @@
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
 
 (defn list-all-ns []
-  (pprint (map ns-name (all-ns))))
+  (pprint/pprint (map ns-name (all-ns))))
 
 ;; golf conbini
 (defn p [& args]
-  (apply pprint args))
+  (apply pprint/pprint args))
 
 (defn cp [& args]
   (apply puget/cprint args))
+
+(defn wp [x]
+  (binding [pprint/*print-right-margin* 100]
+    (pprint/pprint x)))
+
+(defn wwp [x]
+  (binding [pprint/*print-right-margin* 200]
+    (pprint/pprint x)))
