@@ -1,5 +1,5 @@
 (ns syringe.dose
-  (:require [clojure.pprint :refer [pprint]]
+  (:require [clojure.pprint :refer [pprint *print-right-margin*]]
             [clojure.reflect :as reflect]
             [clojure.java.classpath :as cp]
             [clojure.tools.namespace.find :as find]
@@ -127,9 +127,9 @@
   (apply puget/cprint args))
 
 (defn wp [x]
-  (binding [pprint/*print-right-margin* 100]
+  (binding [*print-right-margin* 100]
     (pprint x)))
 
 (defn wwp [x]
-  (binding [pprint/*print-right-margin* 200]
+  (binding [*print-right-margin* 200]
     (pprint x)))
