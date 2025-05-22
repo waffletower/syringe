@@ -1,9 +1,12 @@
 (ns syringe.dose
-  (:require [clojure.pprint :as pprint]
+  (:require [clojure.pprint :refer [pprint *print-right-margin*]]
             [clojure.reflect :as reflect]
+            [clojure.java.classpath :as cp]
+            [clojure.tools.namespace.find :as find]
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
+;; prefer meadows to razor-wire and chain-link fencing
 (defn handle-aliases [sym]
   (let [aliases (ns-aliases *ns*)]
     (if-let [namespace (get aliases sym)]
@@ -30,7 +33,8 @@
 
 ;; namespace utilities
 (defmacro publics
-  "inspect public symbols of namespace"
+  "inspect public symbols of namespace.
+  `n` namespace -- can be an namespace symbol alias."
   ([] `(publics ~*ns*))
   ([n] `(->> '~n
              stringify
@@ -41,7 +45,8 @@
              sort)))
 
 (defmacro interns
-  "inspect public symbols of namespace"
+  "inspect public symbols of namespace.
+  `n` namespace -- can be an namespace symbol alias."
   ([] `(publics ~*ns*))
   ([n] `(->> '~n
              stringify
@@ -52,7 +57,8 @@
              sort)))
 
 (defmacro refers
-  "inspect referenced symbols of namespace"
+  "inspect referenced symbols of namespace.
+  `n` namespace -- can be an namespace symbol alias."
   ([] `(refers ~*ns*))
   ([n] `(->> '~n
              stringify
@@ -64,7 +70,7 @@
 
 (defmacro seq-matches
   "filter a sequence by coercing items to a string and applying re-find with a supplied regex
-  re - regex pattern (or string which will be coerced to a pattern)
+  re - regex pattern (symbols or strings will be coerced to a pattern)
   sq - sequence of strings or string coercible objects"
  [re sq]
   (let [p# (patternize re)]
@@ -72,7 +78,7 @@
 
 (defmacro ns-find
   "perform a regex search of public symbols in a namespace
-  re - regex pattern (or string which will be coerced to a pattern)
+  re - regex pattern (symbols or strings will be coerced to a pattern)
   n - namespace symbol (either quoted or unquoted via stringify)"
   ([re] `(ns-find ~re 'clojure.core))
   ([re n] `(seq-matches ~re (publics ~n))))
@@ -84,9 +90,6 @@
   ([] `(resolve-fqns *ns*))
   ([symbol-or-string] `(resolve-fqns (symbol (stringify '~symbol-or-string)))))
 
-(defn list-all-ns []
-  (pprint/pprint (map ns-name (all-ns))))
-
 (defn ponder
   "Show public methods of `x` without packaging"
   [x]
@@ -96,17 +99,37 @@
        (sort-by :name)
        vec))
 
+(defn list-ns
+  "outputs sorted collection of namespace symbols via `clojure.java.classpath/classpath` and
+  `clojure.tools.namespace.find/find-namespaces`."
+  []
+  (->> (cp/classpath)
+       find/find-namespaces
+       sort))
+
+(defmacro filter-ns
+  "outputs sorted collection of namespace symbols via `clojure.java.classpath/classpath` and
+  `clojure.tools.namespace.find/find-namespaces`.
+  Allows regex symbol filtering via optional `re` argument (regex, string, or even symbols)."
+  ([] `(list-ns))
+  ([re]
+   (let [p# (when re (patternize re))]
+     `(let [ss# (list-ns)]
+        (if ~p#
+          (filter (fn [x#] (re-find ~p# (str x#))) ss#)
+          ss#)))))
+
 ;; golf conbini
 (defn p [& args]
-  (apply pprint/pprint args))
+  (apply pprint args))
 
 (defn cp [& args]
   (apply puget/cprint args))
 
 (defn wp [x]
-  (binding [pprint/*print-right-margin* 100]
-    (pprint/pprint x)))
+  (binding [*print-right-margin* 100]
+    (pprint x)))
 
 (defn wwp [x]
-  (binding [pprint/*print-right-margin* 200]
-    (pprint/pprint x)))
+  (binding [*print-right-margin* 200]
+    (pprint x)))
