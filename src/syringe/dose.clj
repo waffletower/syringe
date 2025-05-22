@@ -1,5 +1,6 @@
 (ns syringe.dose
   (:require [clojure.pprint :as pprint]
+            [clojure.reflect :as reflect]
             [puget.printer :as puget]))
 
 ;; don't privatize functions invoked by macros
@@ -85,6 +86,15 @@
 
 (defn list-all-ns []
   (pprint/pprint (map ns-name (all-ns))))
+
+(defn ponder
+  "Show public methods of `x` without packaging"
+  [x]
+  (->> (reflect/reflect x)
+       :members
+       (filter (comp #(contains? % :public) :flags))
+       (sort-by :name)
+       vec))
 
 ;; golf conbini
 (defn p [& args]
